@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # MediBridge: Smart Healthcare & Insurance Management Platform
 
 MediBridge connects patients, hospitals and health insurers through one platform. Its core idea is the
@@ -163,3 +164,6 @@ medibridge/
 ├── docker-compose.yml  MySQL + backend + AI + frontend
 └── .env.example
 ```
+=======
+# MediBridge-Smart-Healthcare-Insurance-Management-
+>>>>>>> 5665e79a7fe21fc791f65ee6533fa3a964991f67
