@@ -1,0 +1,54 @@
+# MediBridge full stack: MySQL + Spring Boot API + Python AI service + React frontend
+# Run:  docker compose up --build      Then open http://localhost:8081
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: medibridge
+      MYSQL_USER: medibridge
+      MYSQL_PASSWORD: medibridge
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpass"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  ai:
+    build: ./ai-service
+    environment:
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-1.5-flash}
+    ports:
+      - "8000:8000"
+
+  backend:
+    build: ./backend
+    environment:
+      DB_HOST: mysql
+      DB_USER: medibridge
+      DB_PASSWORD: medibridge
+      JWT_SECRET: ${JWT_SECRET:-change-me-to-a-long-random-secret-of-at-least-64-characters-please}
+      AI_SERVICE_URL: http://ai:8000
+      CORS_ORIGINS: http://localhost:8081
+    depends_on:
+      mysql:
+        condition: service_healthy
+      ai:
+        condition: service_started
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    ports:
+      - "8081:80"
+
+volumes:
+  mysql-data:
